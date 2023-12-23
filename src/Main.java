@@ -6,10 +6,9 @@ import java.awt.geom.Line2D;
 public class Main extends JPanel {
     private int x1 = 50;
     private int y1 = 50;
-
-    private int firstEndX;
-    private int firstEndY;
-    private int maxDistance = 700;
+    private static int firstEndX;
+    private static int firstEndY;
+    private static int maxDistance = 700;
 
     public Main() {
         setBackground(Color.BLACK);
@@ -55,13 +54,13 @@ public class Main extends JPanel {
 
 
 
-        for (double angle = 0; angle < 360; angle += 0.5) {
+        for (double angle = 0; angle < 360; angle += 4) {
             double radians = Math.toRadians(angle);
             int endX = (int) (x1 + maxDistance * Math.cos(radians));
             int endY = (int) (y1 - maxDistance * Math.sin(radians));
             firstEndX = endX;
             firstEndY = endY;
-            double distanceVector = 1000;//Math.sqrt(Math.pow(tempFinalPX - x1, 2) + Math.pow(tempFinalPY - y1, 2));
+            double distanceVector = maxDistance;
             Line2D tempLine = new Line2D.Double(x1, y1, endX, endY);
             for (Line2D line : staticLineArray) {
                 if(tempLine.intersectsLine(line)){
@@ -87,9 +86,6 @@ public class Main extends JPanel {
 
                         double tmpDistance = Math.sqrt(Math.pow(px - x1, 2) + Math.pow( py - y1, 2));
                         if(distanceVector > tmpDistance){
-                            GradientPaint gradient = new GradientPaint((float) x11, (float) y11, Color.blue, endX, endY, Color.blue);
-                            g2d.setPaint(gradient);
-                            g2d.drawOval((int) px-1, (int) py, 1, 1);
                             distanceVector = tmpDistance;
                             endX = (int) px-1;
                             endY = (int) py;
@@ -98,12 +94,13 @@ public class Main extends JPanel {
                 }
             }
 
-
-
             GradientPaint gradient = new GradientPaint(x1, y1, startColor, firstEndX, firstEndY, endColor);
             g2d.setPaint(gradient);
             g2d.drawLine(x1, y1, endX, endY);
-
+            if (distanceVector < maxDistance) {
+                g2d.setPaint(Color.blue);
+                g2d.drawOval(endX, endY, 1, 1);
+            }
         }
 
     }
